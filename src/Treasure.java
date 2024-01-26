@@ -7,17 +7,10 @@ public class Treasure {
 	private Menu menuPrincipal;						// Menú para gestionar el juego
 	private int movimientos;						// Movimientos en un partida
 	private Tablero tlo = new Tablero(5,4,false);	// Tablero de 5X4 oculto
-	private int puntos = 0;
+	private int vidas;
 	private final char vidaExtra = '@';
 	private final char mina = '*';
 	private final char tesoro = '$';
-	public int getMovimientos() {
-		return movimientos;
-	}
-
-	public void setMovimientos(int movimientos) {
-		this.movimientos = movimientos;
-	}
 
 	public static void main(String[] args) {
 
@@ -26,10 +19,11 @@ public class Treasure {
 		System.out.println("\nAplicación terminada");
 	}
 
+	/**
+	 * Gestiona una sesión del programa Treasure Hunt
+	 */
 	public void nuevaPartida() {
 		
-	// -------------- Inicializaci�n de la partida
-
 		String [] opcs = {"Nueva Partida","Tabla de Puntuaciones"};
 		this.menuPrincipal = new Menu ();
 		boolean finSesion = false;
@@ -46,46 +40,48 @@ public class Treasure {
 				case 2: // Creditos
 					System.out.println("\n1 TBP \n");
 					break;
-				case 0: // salir aplicaci�n
+				case 0: // salir aplicación
 					finSesion= true;
 			} // switch
 		} // while !finSesion
 	} // JuegaPartida
 
+	/**
+	 * Ejecuta una partida del juego Treasure Hunt
+	 */
 	public void playTheGame() {
 		
-		int vidas = 3;
+
 		boolean finJuego = false;
-		
+		this.vidas = 3;
 		this.movimientos = 0;
-		this.puntos= 0;
 		tlo.limpiaTablero();
 		setNivel();
 		while (!finJuego && vidas>0) {	
 			tlo.mostrarTablero();
+			muestraMarcador();
 			tlo.leeMovimiento();
-			switch (this.procesa()) {
+			switch (this.procesaMovimiento()) {
 				case 0: // casilla en blanco
 					break;
 				case 1: // vida extra
-					vidas += 1;
+					vidas ++;
 					break;
 				case 2: // mina
-					vidas -= 1;
+					vidas --;
 					break;
 				case 3: // tesoro
 					finJuego=true;
 					break;	
 			}
-			if (tlo.isEmpty()){
-				finJuego=true;
-			}
 			this.movimientos++;
 		} // while !finJuego
-		
+		tlo.mostrarTablero();
+		System.out.println("**** JUEGO TERMINADO ****");
+
 		if (vidas>0) {
-		System.out.println("***********************************************\n"
-				+          "Enhorabuena : " + this.getMovimientos() + " movimientos !" +
+		System.out.println("\n***********************************************\n"
+				+          "Tesoro encontrado en : " + this.movimientos + " movimientos !" +
 		                 "\n***********************************************\n");}
 		else {
 			System.out.println("***********************************************\n"
@@ -96,15 +92,20 @@ public class Treasure {
 	} // PlayTheGame
 	
 	/**
+	 * Muestra el número de movimientos y las vidas
+	 */
+	private void muestraMarcador() {
+		System.out.println(
+				"************************************\n"
+			+   "Vidas : " + vidas + "      Movimientos : "+ movimientos 
+		    + "\n************************************\n");
+	}
+	
+	/**
 	 * Inicializa el juego con un nivel predefinido. Hay que generar aleatoriamente:
-	 * x1 @ tesoro
-	 * x4 * minas
-	 * X1 $ vida extra
+	 * 1 @ tesoro,  4 * minas ,  1 $ vida extra
 	 */
 	public void setNivel() {
-
-		int tmpFila,tmpColumna;
-		boolean dupFlag = false;
 
 		setItem(this.tesoro);			// tesoro
 		setItem(this.vidaExtra);		// vida extra	
@@ -113,30 +114,42 @@ public class Treasure {
 		}
 	} // setNivel
 	
+	/**
+	 * Rellena una celda aleatoria con el valor especificado.
+	 * Si la posición está ocupada genera otra hasta encontrar
+	 * una vacía
+	 * @param valor valor con el que se actualiza la celda.
+	 */
+	
 	public void setItem(char valor) {
 		int tmpFila,tmpColumna;
 		boolean dupFlag = false;
 		while (!dupFlag) {
-			tmpFila = (int) Math.random() * tlo.getNumFilas();
-			tmpColumna = (int) Math.random() * tlo.getNumFilas();
-			if (tlo.leerCelda(tmpFila, tmpColumna) != tlo.getEmptyCell()) {
-				tlo.marcarCelda(tmpFila, tmpColumna, valor);	
+			tmpFila = (int) (Math.random() * tlo.getNumFilas());
+			tmpColumna = (int) (Math.random() * tlo.getNumColumnas());
+			if (tlo.leerCelda(tmpFila, tmpColumna) == tlo.getEmptyCell()) { // Compruebo si está ocupada
+				tlo.marcarCelda(tmpFila, tmpColumna, valor); // En tableros ocultos, establecer un valor hace visible la celda
+				tlo.setEstadoCelda(tmpFila, tmpColumna, false); // Como estamos en inicalización, la volvemos a ocultar
 				dupFlag = true;
 			}
 		} // while
 		
 	}
-	public int procesa() {
+	/**
+	 * Devuelve el código correspondiente al caracter encontrado en la celda
+	 * @return		0 celda vacía, 1 vida extra, 2 mina, 3 tesoro
+	 */
+	public int procesaMovimiento() {
 		
 		char c = tlo.leerCelda(tlo.getFila(), tlo.getColumna());
 		tlo.marcarCelda(tlo.getFila(),tlo.getColumna(),c);
-		if (c== this.mina)
+		if (c==this.vidaExtra)
+			return 1;
+		else if (c== this.mina)
 			return 2;
 		else if (c==this.tesoro)
 			return 3;
-		else if (c==this.vidaExtra)
-			return 1;
-		else 
+		else       // celda vacía
 			return 0;
 	} // procesa
 	

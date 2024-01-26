@@ -72,6 +72,21 @@ public class Tablero {
 		return tablero[_fila][_columna];
 
 	}
+	
+	/**
+	 * Devuelve el estado de visibilidad de la celda
+	 * @param _fila
+	 * @param _columna
+	 * @return true -> visible, false -> invisible
+	 */
+	public boolean leerEstadoCelda(int _fila,int _columna) throws ArrayIndexOutOfBoundsException  {
+		return visible[_fila][_columna];
+	}
+	
+	public void setEstadoCelda(int _fila,int _columna, boolean estado) throws ArrayIndexOutOfBoundsException  {
+		visible[_fila][_columna]= estado;
+	}
+	
 	/**
 	 * Limpia el tablero dejándolo listo para unnuevo uso.
 	 */
@@ -116,19 +131,16 @@ public class Tablero {
 	public void mostrarTablero() {
 		System.out.println();
 		System.out.print("    ");
-		for(int j=0; j<tablero.length; j++) {
+		for(int j=0; j<this.getNumColumnas(); j++) {
 			System.out.print("|"+(j+1) + "|");
 		} // columnas
 		System.out.println();
-		for(int i=0; i<tablero.length; i++) {
+		for(int i=0; i<this.getNumFilas(); i++) {
 			System.out.print("|"+ (i+1)+"| ");
-			for(int j=0; j<tablero.length; j++) {
+			for(int j=0; j<this.getNumColumnas(); j++) {
 				if (visible[i][j]) // Si está visible
-//				System.out.print("["+tablero[i][j] + "]");
-//				else
-//				System.out.print("["+this.hideCell + "]");
 					System.out.print("("+tablero[i][j] + ")");
-					else
+				else
 					System.out.print("("+this.hideCell + ")");				
 			} // columnas
 			System.out.println();
@@ -151,7 +163,7 @@ public class Tablero {
 			a = sc.nextInt();
 			System.out.print("\nEscribe la posición vertical (🡳): ");
 			b = sc.nextInt();		
-			if(a<=tablero.length && b<=tablero.length && b>0 && a>0) {
+			if(a<=tablero.length && b<=tablero[0].length && b>0 && a>0) {
 				this.pepe = a-1;
 				this.ultColumna = b-1;
 				salir = true;
@@ -181,7 +193,7 @@ public class Tablero {
 	 */
 	private void borrarCeldas() {
 		for(int i=0; i<tablero.length; i++) {
-			for(int j=0; j<tablero.length; j++) {
+			for(int j=0; j<tablero[0].length; j++) {
 				tablero[i][j] = this.emptyCell;
 			}
 		}
@@ -192,7 +204,7 @@ public class Tablero {
 	 */
 	private void initEstado() {
 		for(int i=0; i<visible.length; i++) {
-			for(int j=0; j<visible.length; j++) {
+			for(int j=0; j<visible[0].length; j++) {
 				visible[i][j] = this.estado;
 			}
 		}
