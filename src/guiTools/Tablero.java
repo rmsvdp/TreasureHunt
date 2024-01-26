@@ -6,7 +6,7 @@ public class Tablero {
 
 	private char[][] tablero;
 	private boolean[][] visible; // Indica si la celda se visualiza o no
-	private int pepe;  // Úlitma elección del jugador
+	private int ultFila;  // Úlitma elección del jugador
 	private int ultColumna;// Úlitma elección del jugador
 	private int nfichas; //numero fichas puestas en tablero
 	private char emptyCell = ' '; // valor que identifica el estado vacío
@@ -26,40 +26,16 @@ public class Tablero {
 		this.estado = _estado;
 		limpiaTablero();
 	}
-	
 	public int getNumFilas() {return this.tablero.length;}
 	public int getNumColumnas() {return this.tablero[0].length;}
-	public int getFila() {
-		return pepe;     
-	}
-
-	public void setFila(int fila) {
-		this.pepe = fila;
-	}
-
-	public int getColumna() {
-		return ultColumna;
-	}
-
-	public void setColumna(int columna) {
-		this.ultColumna = columna;
-	}
-
-	public char getEmptyCell() {
-		return emptyCell;
-	}
-
-	public void setEmptyCell(char emptyCell) {
-		this.emptyCell = emptyCell;
-	}
-
-	public char getHideCell() {
-		return hideCell;
-	}
-
-	public void setHideCell(char hideCell) {
-		this.hideCell = hideCell;
-	}
+	public int getFila() {	return ultFila;	}
+	public void setFila(int fila) {	this.ultFila = fila;}
+	public int getColumna() {return ultColumna;	}
+	public void setColumna(int columna) {this.ultColumna = columna;	}
+	public char getEmptyCell() {return emptyCell;	}
+	public void setEmptyCell(char emptyCell) {	this.emptyCell = emptyCell;	}
+	public char getHideCell() {return hideCell;	}
+	public void setHideCell(char hideCell) {this.hideCell = hideCell;	}
 
 	/**
 	 * Devuelve el caracter que contiene la celda direccionada
@@ -68,21 +44,11 @@ public class Tablero {
 	 * @return valor del caracter o chr$(0) si la combinación fila-columna no es válida
 	 */
 	public char leerCelda(int _fila,int _columna) throws ArrayIndexOutOfBoundsException  {
-
 		return tablero[_fila][_columna];
-
 	}
-	
-	/**
-	 * Devuelve el estado de visibilidad de la celda
-	 * @param _fila
-	 * @param _columna
-	 * @return true -> visible, false -> invisible
-	 */
 	public boolean leerEstadoCelda(int _fila,int _columna) throws ArrayIndexOutOfBoundsException  {
 		return visible[_fila][_columna];
 	}
-	
 	public void setEstadoCelda(int _fila,int _columna, boolean estado) throws ArrayIndexOutOfBoundsException  {
 		visible[_fila][_columna]= estado;
 	}
@@ -102,8 +68,6 @@ public class Tablero {
 	 * @return true si está lleno y false si quedan celdas sin utilizar
 	 */
 	public boolean isFull() {
-		
-		
 		return (nfichas == this.tablero[0].length * this.tablero.length)?true:false;
 	}
 	/**
@@ -123,7 +87,6 @@ public class Tablero {
 		}	
 		return res;
 	}
-
 
 	/**
 	 * Muestra el contenido del tablero en cualquiera de sus modos.
@@ -146,7 +109,7 @@ public class Tablero {
 			System.out.println();
 		} // filas
 		System.out.println();
-	} // mostrat tablero
+	} // mostrar tablero
 
 /**
  * Permite introducir por teclado las coordenadas de la casilla
@@ -159,12 +122,12 @@ public class Tablero {
 		boolean salir = false;
 		while(!salir) {
 			
-			System.out.printf("\nEscribe la posición horizontal (🡲): ") ;
+			System.out.printf("\nEscribe la posición horizontal (?): ") ;
 			a = sc.nextInt();
-			System.out.print("\nEscribe la posición vertical (🡳): ");
+			System.out.print("\nEscribe la posición vertical (?): ");
 			b = sc.nextInt();		
 			if(a<=tablero.length && b<=tablero[0].length && b>0 && a>0) {
-				this.pepe = a-1;
+				this.ultFila = a-1;
 				this.ultColumna = b-1;
 				salir = true;
 			} else {
@@ -181,12 +144,12 @@ public class Tablero {
 	 * Si la operación es correcta actualiza el contador interno de fichas.
 	 * @param valor valor de la celda
 	 */
-	public void marcarCelda(int _fila, int _columna, char valor) {
+	public void marcarCelda(int _fila, int _columna, char valor) throws ArrayIndexOutOfBoundsException {
 		
 		tablero [_fila][_columna] = valor;
 		visible [_fila][_columna] = true;
 		nfichas++;
-	}
+	}// marcarCelda
 	
 	/**
 	 * Inicializa toda la rejilla de celdas del tablero
@@ -203,14 +166,12 @@ public class Tablero {
 	 * Inicializa el estado de la rejilla de visibilidad
 	 */
 	private void initEstado() {
-		for(int i=0; i<visible.length; i++) {
-			for(int j=0; j<visible[0].length; j++) {
+		for(int i=0; i<this.getNumFilas(); i++) {
+			for(int j=0; j<this.getNumColumnas(); j++) {
 				visible[i][j] = this.estado;
 			}
 		}
 	} // initEstado
-	
-	
 	
 	
 } // Class Tablero
