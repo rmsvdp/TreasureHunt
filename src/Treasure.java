@@ -57,26 +57,32 @@ public class Treasure {
 		this.movimientos = 0;
 		tlo.limpiaTablero();
 		setNivel();
+		String msg = "";
 		while (!finJuego && vidas>0) {	
 			tlo.mostrarTablero();
-			muestraMarcador();
 			tlo.leeMovimiento();
 			switch (this.procesaMovimiento()) {
 				case 0: // casilla en blanco
+					msg="**** Aquí no hay nada ...";
 					break;
 				case 1: // vida extra
+					msg="**** Has encontrado una vida Extra !";
 					vidas ++;
 					break;
 				case 2: // mina
+					msg="**** Has encontrado una mina, pierdes una vida !";
 					vidas --;
 					break;
 				case 3: // tesoro
+					msg="**** Aquí estaba el Tesoro !*";
 					finJuego=true;
 					break;	
 			}
 			this.movimientos++;
+			tlo.mostrarTablero();
+			muestraMarcador(msg);
 		} // while !finJuego
-		tlo.mostrarTablero();
+
 		System.out.println("**** JUEGO TERMINADO ****");
 
 		if (vidas>0) {
@@ -90,17 +96,18 @@ public class Treasure {
 		}
 		
 	} // PlayTheGame
-	
+	  
 	/**
 	 * Muestra el número de movimientos y las vidas
 	 */
-	private void muestraMarcador() {
+	private void muestraMarcador(String _msg) {
 		System.out.println(
 				"************************************\n"
-			+   "Vidas : " + vidas + "      Movimientos : "+ movimientos 
+			+   _msg +"\n"	
+			+   "**** Vidas : " + vidas + "      Movimientos : "+ movimientos 
 		    + "\n************************************\n");
 	}
-	
+	   
 	/**
 	 * Inicializa el juego con un nivel predefinido. Hay que generar aleatoriamente:
 	 * 1 @ tesoro,  4 * minas ,  1 $ vida extra
